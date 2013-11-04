@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>CCC18361-6FAD-479B-97F6-14EAE7BB9A92</string>
+	<key>IDESourceControlProjectName</key>
+	<string>voxelify</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>B6549F41-85AE-4CB5-9EF1-E9E449C7E860</key>
+		<string>https://github.com/eighteight/Voxelify.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>voxelify.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>B6549F41-85AE-4CB5-9EF1-E9E449C7E860</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/eighteight/Voxelify.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>B6549F41-85AE-4CB5-9EF1-E9E449C7E860</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>B6549F41-85AE-4CB5-9EF1-E9E449C7E860</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Voxelify</string>
+		</dict>
+	</array>
+</dict>
+</plist>
