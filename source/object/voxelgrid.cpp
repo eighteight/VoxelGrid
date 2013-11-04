@@ -95,40 +95,13 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     
     LONG gridSize = data->GetLong(GRID_SIZE, 1);
     
-    BaseDocument *doc = op->GetDocument();
-    BaseObject* obj = (BaseObject*)data->GetLink(CTT_OBJECT_LINK,doc,Obase);
-    if (!obj) return NULL;
-    LONG startObject = data->GetLong(START_FRAME);
-    LONG endObject = data->GetLong(END_FRAME);
+    BaseObject* chld = (BaseObject*)op->GetDown()->GetClone(COPYFLAGS_NO_HIERARCHY|COPYFLAGS_NO_ANIMATION|COPYFLAGS_NO_BITS,NULL);
     
-    if (startObject >=endObject) return NULL;
-    
-    maxSeg = data->GetReal(CTTSPOBJECT_MAXSEG,30.);
-    minSeg = data->GetReal(CTTSPOBJECT_MINSEG);
-    
-    LONG delta = data->GetLong(OBJECT_SKIP,1);
-    delta = delta < 1 ? 1 : delta;
-    
-    GeDynamicArray<BaseObject*> children;
-    GeDynamicArray<GeDynamicArray<Vector> > splineAtPoint;
-    
-    BaseObject* chld = NULL;
-    LONG trck = 0;
-    for (chld=obj->GetDownLast(); chld; chld=chld->GetPred()) {
-        if (trck >= startObject && trck<= endObject && trck % delta == 0){
-            children.Push((BaseObject*)chld->GetClone(COPYFLAGS_NO_HIERARCHY|COPYFLAGS_NO_ANIMATION|COPYFLAGS_NO_BITS,NULL));
-        }
-        trck++;
-    }
-    
-    if (children.GetCount() < 1) {
+    if (!chld) {
         return NULL;
     }
     
-    LONG longestPercent = data->GetLong(TAKE_LONGEST, 1);
-    longestPercent = longestPercent > 100 ? 100: longestPercent;
-    
-    GeDynamicArray<GeDynamicArray<Vector> > objectPoints(children.GetCount());
+    GeDynamicArray<Vector> objectPoints;
 	StatusSetBar(0);
     StatusSetText("Collecting Points");
     vector<vector<float> > points;
@@ -137,29 +110,23 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     BaseObject* ret = BaseObject::Alloc(Onull);
 
     parentMatrix = op->GetMl();
-    for (int k= 0; k < 1; k++){
-        Vector bb = children[k]->GetRad();
-        Matrix ml;
-        DoRecursion(op,children[k],objectPoints[k], ml);
-        points = objectPointsToPoints(objectPoints[k]);
-        GePrint(children[k]->GetName());
-        VGrid grid = vox.voxelify(points,bb.x/(float)gridSize,bb.y/(float)gridSize,bb.z/(float)gridSize);
-        
-        for (int i = 0; i < grid.points.size(); i++){
-            if (grid.indices[i] == -1) continue;
-            Vector pos(grid.points[i][0],grid.points[i][1],grid.points[i][2]);
-            BaseObject* cube = BaseObject::Alloc(Ocube);
-            cube->SetRelPos(pos*parentMatrix);
-            cube->InsertUnder(ret);
-        }
-    }
-    
 
+    Vector bb = chld->GetRad();
+    Vector gridStep(bb.x/gridSize, bb.y/gridSize, bb.z/gridSize);
+    Matrix ml;
+    DoRecursion(op,chld,objectPoints, ml);
+    if (objectPoints.GetCount() == 0) return NULL;
+    points = objectPointsToPoints(objectPoints);
+    GePrint(chld->GetName());
+    VGrid grid = vox.voxelify(points,gridStep.x,gridStep.y,gridStep.z);
     
-    for (int k=0; k<children.GetCount(); k++){
-        if (children[k]){
-            BaseObject::Free(children[k]);
-        }
+    for (int i = 0; i < grid.points.size(); i++){
+        if (grid.indices[i] == -1) continue;
+        Vector pos(grid.points[i][0],grid.points[i][1],grid.points[i][2]);
+        BaseObject* cube = BaseObject::Alloc(Ocube);
+        cube->SetRelPos(pos);
+        cube->SetRelScale(Vector(1.0/gridSize, 1.0/gridSize, 1.0/gridSize));
+        cube->InsertUnder(ret);
     }
     
     return ret;
