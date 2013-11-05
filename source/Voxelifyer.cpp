@@ -23,6 +23,20 @@ using namespace boost;
 using namespace pcl;
 using namespace std;
 
+template<typename T>
+struct mallocDeleter
+{
+    void operator() (T*& ptr)
+    {
+        if (ptr)
+        {
+            free(ptr);
+            ptr=NULL;
+        }
+    }
+};
+
+
 void computeBoundingBox(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud, pcl::PointXYZ& min, pcl::PointXYZ& max){
     pcl::PCA< PointXYZ > pca;
     
@@ -58,8 +72,9 @@ void removeOutliers(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<p
 
 }
 
-    static pcl::PCLPointCloud2::Ptr cloud2In = make_shared<pcl::PCLPointCloud2>();
-    static pcl::PCLPointCloud2::Ptr cloud2Out = make_shared<pcl::PCLPointCloud2> ();
+    pcl::PCLPointCloud2::Ptr cloud2In = make_shared<pcl::PCLPointCloud2>();
+    pcl::PCLPointCloud2::Ptr cloud2Out = make_shared<pcl::PCLPointCloud2> ();
+    //boost::shared_ptr< pcl::PCLPointCloud2> cloud2Out( new pcl::PCLPointCloud2(), mallocDeleter<pcl::PCLPointCloud2>());
     VoxelGrid<PCLPointCloud2> voxelGrid;
 VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const float xLeaf, const float yLeaf, const float zLeaf){
     

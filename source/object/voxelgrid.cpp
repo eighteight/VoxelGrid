@@ -95,7 +95,11 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     
     LONG gridSize = data->GetLong(GRID_SIZE, 1);
     
-    BaseObject* chld = (BaseObject*)op->GetDown()->GetClone(COPYFLAGS_NO_HIERARCHY|COPYFLAGS_NO_ANIMATION|COPYFLAGS_NO_BITS,NULL);
+    BaseObject* clone = op->GetDown();
+    
+    if (!clone) return NULL;
+    
+    BaseObject* chld = (BaseObject*)clone->GetClone(COPYFLAGS_NO_HIERARCHY|COPYFLAGS_NO_ANIMATION|COPYFLAGS_NO_BITS,NULL);
     
     if (!chld) {
         return NULL;

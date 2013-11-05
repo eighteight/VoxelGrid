@@ -60,13 +60,22 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "source/object/voxelgrid.cpp"
-         timestampString = "405293565.004925"
+         timestampString = "405321795.697696"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "119"
-         endingLineNumber = "119"
+         startingLineNumber = "100"
+         endingLineNumber = "100"
          landmarkName = "VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>
+   <SymbolicBreakpoints>
+      <SymbolicBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         symbolName = "malloc_error_break"
+         moduleName = "libstdc++.6.dylib">
+      </SymbolicBreakpoint>
+   </SymbolicBreakpoints>
 </Bucket>
