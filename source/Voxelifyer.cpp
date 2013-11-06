@@ -81,7 +81,49 @@ void removeCentroidOutliers(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl
     centro[0] = centroid.x();
     centro[1] = centroid.y();
     centro[2] = centroid.z();
+    
+    vector<vector<float> > temp;
+    
+    for (size_t i = 0; i < cloud->points.size(); i++){
+        pcl::PointXYZ& pt = cloud->points[i];
+        float dx = pt.x - centroid.x();
+        float dy = pt.y - centroid.y();
+        float dz = pt.z - centroid.z();
+        float dist2 = dx*dx + dy*dy +dz*dz;
+        if (dist2 > radius2) continue;
+        vector<float> pnt(3);
+        pnt[0] = cloud->points[i].x;
+        pnt[1] = cloud->points[i].y;
+        pnt[2] = cloud->points[i].z;
+        temp.push_back(pnt);
+    }
 
+    cloud_filtered->width  = temp.size();
+    cloud_filtered->height = 1;
+    cloud_filtered->is_dense = false;
+    cloud_filtered->points.resize (temp.size());
+    
+    for (size_t i = 0; i < cloud_filtered->points.size (); ++i) {
+        pcl::PointXYZ& pt = cloud_filtered->points[i];
+        pt.x = temp[i][0];
+        pt.y = temp[i][1];
+        pt.z = temp[i][2];
+    }
+    
+    std::cerr << " before " << cloud->size() << " after " << cloud_filtered->size()<< std::endl;
+    
+}
+
+
+void filterCentroidOutliers(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_filtered, const float radius2, vector<float>&centro){
+    Eigen::Vector4f centroid;
+    pcl::compute3DCentroid(*cloud,centroid);
+    cout<<"CENTRO"<<centroid<<endl;
+    
+    centro[0] = centroid.x();
+    centro[1] = centroid.y();
+    centro[2] = centroid.z();
+    
     Eigen::Matrix3f A;A(0, 0) = 1/radius2;A(0, 1) = 0;A(0, 2) = 0;A(1, 0) = 0;A(1, 1) = 1/radius2;A(1, 2) = 0;A(2, 0) = 0;A(2, 1) = 0;A(2, 2) = 0;
     Eigen::Vector3f v;v(0)=centroid.x();v(1)=centroid.y();v(2)=centroid.z();
     float c = -1;
@@ -91,7 +133,7 @@ void removeCentroidOutliers(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl
     
     // build the filter
     condrem.setCondition(range_cond);
-
+    
     condrem.setInputCloud (cloud);
     
     // apply filter
@@ -100,6 +142,7 @@ void removeCentroidOutliers(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl
     std::cerr << " before " << cloud->size() << " after " << cloud_filtered->size()<< std::endl;
     
 }
+
 
     pcl::PCLPointCloud2::Ptr cloud2In = make_shared<pcl::PCLPointCloud2>();
     pcl::PCLPointCloud2::Ptr cloud2Out = make_shared<pcl::PCLPointCloud2> ();
@@ -128,11 +171,11 @@ VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const
     cloudInOut = cloud_filtered;
     //removeOutliers(cloudInOut, cloud_filtered);
     //cloudInOut = cloud_filtered;
-    computeBoundingBox(cloudInOut, min, max);
-    vector<float> bb (3);
-    bb[0] = max.x - min.x;
-    bb[1] = max.y - min.y;
-    bb[2] = max.z - min.z;
+    //computeBoundingBox(cloudInOut, min, max);
+//    vector<float> bb (3);
+//    bb[0] = max.x - min.x;
+//    bb[1] = max.y - min.y;
+//    bb[2] = max.z - min.z;
     pcl::toPCLPointCloud2 (*cloudInOut,*cloud2In);
 
     voxelGrid.setInputCloud (cloud2In);
