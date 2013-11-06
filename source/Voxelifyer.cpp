@@ -13,7 +13,8 @@
 #include <pcl/common/pca.h>
 #include <pcl/common/common.h>
 #include <pcl/filters/statistical_outlier_removal.h>
-
+#include <pcl/filters/conditional_removal.h>
+#include <pcl/common/centroid.h>
 #include <boost/make_shared.hpp>
 
 #include <iostream>
@@ -24,14 +25,14 @@ using namespace pcl;
 using namespace std;
 
 template<typename T>
-struct mallocDeleter
+struct Deleter
 {
     void operator() (T*& ptr)
     {
         if (ptr)
         {
-            free(ptr);
-            ptr=NULL;
+//            free(ptr);
+//            ptr=NULL;
         }
     }
 };
@@ -71,12 +72,40 @@ void removeOutliers(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<p
     std::cerr << *cloud_filtered << std::endl;
 
 }
+    ConditionalRemoval<pcl::PointXYZ>condrem;
+void removeCentroidOutliers(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_filtered, const float radius2, vector<float>&centro){
+    Eigen::Vector4f centroid;
+    pcl::compute3DCentroid(*cloud,centroid);
+    cout<<"CENTRO"<<centroid<<endl;
+
+    centro[0] = centroid.x();
+    centro[1] = centroid.y();
+    centro[2] = centroid.z();
+
+    Eigen::Matrix3f A;A(0, 0) = 1/radius2;A(0, 1) = 0;A(0, 2) = 0;A(1, 0) = 0;A(1, 1) = 1/radius2;A(1, 2) = 0;A(2, 0) = 0;A(2, 1) = 0;A(2, 2) = 0;
+    Eigen::Vector3f v;v(0)=centroid.x();v(1)=centroid.y();v(2)=centroid.z();
+    float c = -1;
+    
+    ConditionAnd<PointXYZ>::Ptr range_cond (new ConditionAnd< PointXYZ > (), Deleter< ConditionAnd< PointXYZ > >());
+    range_cond->addComparison(TfQuadraticXYZComparison < PointXYZ >::Ptr (new TfQuadraticXYZComparison < PointXYZ >(ComparisonOps::GT , A, v, c)));
+    
+    // build the filter
+    condrem.setCondition(range_cond);
+
+    condrem.setInputCloud (cloud);
+    
+    // apply filter
+    condrem.filter (*cloud_filtered);
+    
+    std::cerr << " before " << cloud->size() << " after " << cloud_filtered->size()<< std::endl;
+    
+}
 
     pcl::PCLPointCloud2::Ptr cloud2In = make_shared<pcl::PCLPointCloud2>();
     pcl::PCLPointCloud2::Ptr cloud2Out = make_shared<pcl::PCLPointCloud2> ();
     //boost::shared_ptr< pcl::PCLPointCloud2> cloud2Out( new pcl::PCLPointCloud2(), mallocDeleter<pcl::PCLPointCloud2>());
     VoxelGrid<PCLPointCloud2> voxelGrid;
-VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const float xLeaf, const float yLeaf, const float zLeaf){
+VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const float xLeaf, const float yLeaf, const float zLeaf, const float radius, vector<float> &centro){
     
     PointCloud<PointXYZ>::Ptr cloudInOut = make_shared<PointCloud<PointXYZ> >();
     
@@ -92,10 +121,11 @@ VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const
         pt.z = points[i][2];
     }
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered = make_shared<pcl::PointCloud<pcl::PointXYZ> >();
-    
     pcl::PointXYZ min, max;
-    computeBoundingBox(cloudInOut, min, max);    
+    computeBoundingBox(cloudInOut, min, max);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered = make_shared<pcl::PointCloud<pcl::PointXYZ> >();
+    removeCentroidOutliers(cloudInOut, cloud_filtered, radius*radius, centro);
+    cloudInOut = cloud_filtered;
     //removeOutliers(cloudInOut, cloud_filtered);
     //cloudInOut = cloud_filtered;
     computeBoundingBox(cloudInOut, min, max);

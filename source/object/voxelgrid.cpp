@@ -122,7 +122,10 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     if (objectPoints.GetCount() == 0) return NULL;
     points = objectPointsToPoints(objectPoints);
     GePrint(chld->GetName());
-    VGrid grid = vox.voxelify(points,gridStep.x,gridStep.y,gridStep.z);
+    
+    LONG radius = data->GetReal(RADIUS, 1.0);
+    vector<float> centro(3);
+    VGrid grid = vox.voxelify(points,gridStep.x,gridStep.y,gridStep.z, radius, centro);
     
     for (int i = 0; i < grid.points.size(); i++){
         if (grid.indices[i] == -1) continue;
@@ -132,12 +135,14 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
         cube->SetRelScale(Vector(1.0/gridSize, 1.0/gridSize, 1.0/gridSize));
         cube->InsertUnder(ret);
     }
-    
+    BaseObject* cyl = BaseObject::Alloc(Ocylinder);
+    cyl->SetRelPos(Vector(centro[0], centro[1], centro[2]));
+    cyl->InsertUnder(ret);
     return ret;
 }
 
 
 Bool Registervoxelify(void)
 {
-	return RegisterObjectPlugin(ID_VOXELGRID ,GeLoadString(IDS_VOXELIFY),OBJECT_GENERATOR|OBJECT_INPUT|OBJECT_ISSPLINE|OBJECT_CALL_ADDEXECUTION,VoxelGrid::Alloc,"voxelify",AutoBitmap("tsp.tif"),0);
+	return RegisterObjectPlugin(ID_VOXELGRID ,GeLoadString(IDS_VOXELIFY),OBJECT_GENERATOR|OBJECT_INPUT|OBJECT_CALL_ADDEXECUTION,VoxelGrid::Alloc,"voxelify",AutoBitmap("tsp.tif"),0);
 }

@@ -55,19 +55,6 @@
          landmarkName = "Voxelify::ComputeSpline(BaseThread* bt, vector&lt;VGrid&gt; grids, LONG longestPercent, GeDynamicArray&lt;GeDynamicArray&lt;Vector&gt; &gt; &amp;splinesAtPoint)"
          landmarkType = "5">
       </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "source/object/voxelgrid.cpp"
-         timestampString = "405321795.697696"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "100"
-         endingLineNumber = "100"
-         landmarkName = "VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)"
-         landmarkType = "5">
-      </FileBreakpoint>
    </FileBreakpoints>
    <SymbolicBreakpoints>
       <SymbolicBreakpoint

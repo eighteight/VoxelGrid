@@ -2,11 +2,5 @@ STRINGTABLE voxelify
 {
 	voxelify			    "Voxelify Object";
     GRID_SIZE               "Grid size";
-	CTTSPOBJECT_MAXSEG		"Maximum segment length";
-    CTTSPOBJECT_MINSEG		"Minimum segment length";
-    CTT_OBJECT_LINK         "Sequence parent";
-	OBJECT_SKIP             "Every object";
-    TAKE_LONGEST            "Take longest, %";
-    START_FRAME             "Start object";
-    END_FRAME               "End object";
+	RADIUS                  "Filter radius";
 }
