@@ -55,6 +55,19 @@
          landmarkName = "Voxelify::ComputeSpline(BaseThread* bt, vector&lt;VGrid&gt; grids, LONG longestPercent, GeDynamicArray&lt;GeDynamicArray&lt;Vector&gt; &gt; &amp;splinesAtPoint)"
          landmarkType = "5">
       </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "source/Voxelifyer.cpp"
+         timestampString = "405473795.578345"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "67"
+         endingLineNumber = "67"
+         landmarkName = "removeOutliers(pcl::PointCloud&lt;pcl::PointXYZ&gt;::Ptr cloud, pcl::PointCloud&lt;pcl::PointXYZ&gt;::Ptr&amp; cloud_filtered, const int meanK, const float mulTrh)"
+         landmarkType = "7">
+      </FileBreakpoint>
    </FileBreakpoints>
    <SymbolicBreakpoints>
       <SymbolicBreakpoint

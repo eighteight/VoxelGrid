@@ -5,7 +5,9 @@ enum
 {
 	CTTSPOBJECT_MAXSEG = 200000,
     GRID_SIZE,
-    RADIUS
+    RADIUS,
+    THRESHOLD,
+    MULTIPLIER
 };
 
 #endif

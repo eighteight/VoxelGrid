@@ -3,4 +3,6 @@ STRINGTABLE voxelify
 	voxelify			    "Voxelify Object";
     GRID_SIZE               "Grid size";
 	RADIUS                  "Filter radius";
+    THRESHOLD               "Filter Neighbors";
+    MULTIPLIER              "Filter Multiplier";
 }
