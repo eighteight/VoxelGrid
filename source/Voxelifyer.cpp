@@ -57,9 +57,6 @@ void computeBoundingBox(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud, pcl::PointXY
 boost::shared_ptr<pcl::StatisticalOutlierRemoval<pcl::PointXYZ> > sor = make_shared<pcl::StatisticalOutlierRemoval<pcl::PointXYZ> >();
 
 void removeOutliers(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_filtered, const int meanK, const float mulTrh){
-
-    std::cerr << "Cloud before filtering: " << std::endl;
-    std::cerr << *cloud << std::endl;
     
     // Create the filtering object
     sor->setInputCloud (cloud);
@@ -68,55 +65,26 @@ void removeOutliers(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<p
 
     sor->filter (*cloud_filtered);
     
-    std::cerr << "Cloud after filtering: " << cloud_filtered->points.size() << std::endl;
+    std::cerr << "Stat Outlier " << cloud->points.size()<<" "<<cloud_filtered->points.size() << std::endl;
 
 }
 
-void removeCentroidOutliers(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_filtered, const float radius2, vector<float>&centro){
+vector<float> computeCentro(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
     Eigen::Vector4f centroid;
     pcl::compute3DCentroid(*cloud,centroid);
     cout<<"CENTRO"<<centroid<<endl;
-
+    vector<float> centro(3);
     centro[0] = centroid.x();
     centro[1] = centroid.y();
     centro[2] = centroid.z();
     
-    vector<vector<float> > temp;
-    
-    for (size_t i = 0; i < cloud->points.size(); i++){
-        pcl::PointXYZ& pt = cloud->points[i];
-        float dx = pt.x - centroid.x();
-        float dy = pt.y - centroid.y();
-        float dz = pt.z - centroid.z();
-        float dist2 = dx*dx + dy*dy +dz*dz;
-        if (dist2 > radius2) continue;
-        vector<float> pnt(3);
-        pnt[0] = cloud->points[i].x;
-        pnt[1] = cloud->points[i].y;
-        pnt[2] = cloud->points[i].z;
-        temp.push_back(pnt);
-    }
-
-    cloud_filtered->width  = temp.size();
-    cloud_filtered->height = 1;
-    cloud_filtered->is_dense = false;
-    cloud_filtered->points.resize (temp.size());
-    
-    for (size_t i = 0; i < cloud_filtered->points.size (); ++i) {
-        pcl::PointXYZ& pt = cloud_filtered->points[i];
-        pt.x = temp[i][0];
-        pt.y = temp[i][1];
-        pt.z = temp[i][2];
-    }
-    
-    std::cerr << " before " << cloud->size() << " after " << cloud_filtered->size()<< std::endl;
-    
+    return centro;
 }
     pcl::PCLPointCloud2::Ptr cloud2In = make_shared<pcl::PCLPointCloud2>();
     pcl::PCLPointCloud2::Ptr cloud2Out = make_shared<pcl::PCLPointCloud2> ();
     //boost::shared_ptr< pcl::PCLPointCloud2> cloud2Out( new pcl::PCLPointCloud2(), mallocDeleter<pcl::PCLPointCloud2>());
     VoxelGrid<PCLPointCloud2> voxelGrid;
-VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const float xLeaf, const float yLeaf, const float zLeaf, const float radius, vector<float> &centro, int thre, float multi){
+VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const float xLeaf, const float yLeaf, const float zLeaf, vector<float> &centro, int thre, float multi){
     
     PointCloud<PointXYZ>::Ptr cloudInOut = make_shared<PointCloud<PointXYZ> >();
     
@@ -135,7 +103,7 @@ VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const
     pcl::PointXYZ min, max;
     computeBoundingBox(cloudInOut, min, max);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered = make_shared<pcl::PointCloud<pcl::PointXYZ> >();
-    //removeCentroidOutliers(cloudInOut, cloud_filtered, radius*radius, centro);
+
     removeOutliers(cloudInOut, cloud_filtered, thre, multi);
     
     cloudInOut = cloud_filtered;
@@ -152,7 +120,7 @@ VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const
     voxelGrid.setSaveLeafLayout(true);
     voxelGrid.filter (*cloud2Out);
     
-    cerr << cloudInOut->width * cloudInOut->height <<"->"<< cloud2Out->width * cloud2Out->height<<endl;
+    cerr << "Voxel: "<<cloudInOut->width * cloudInOut->height <<"->"<< cloud2Out->width * cloud2Out->height<<endl;
     
 //    std::cerr << "Min box: " << endl<<voxelGrid.getMinBoxCoordinates()
 //    << endl<<" Max Box " << voxelGrid.getMaxBoxCoordinates() << endl;

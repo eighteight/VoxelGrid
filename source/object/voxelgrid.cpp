@@ -122,12 +122,11 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     if (objectPoints.GetCount() == 0) return NULL;
     points = objectPointsToPoints(objectPoints);
     GePrint(chld->GetName());
-    
-    LONG radius = data->GetReal(RADIUS, 1.0);
+
     LONG thre = data->GetReal(THRESHOLD, 1.0);
     Real multi = data->GetReal(MULTIPLIER, 1.0);
     vector<float> centro(3);
-    VGrid grid = vox.voxelify(points,gridStep.x,gridStep.y,gridStep.z, radius, centro,thre, multi );
+    VGrid grid = vox.voxelify(points,gridStep.x,gridStep.y,gridStep.z, centro, thre, multi );
     
     for (int i = 0; i < grid.points.size(); i++){
         if (grid.indices[i] == -1) continue;
