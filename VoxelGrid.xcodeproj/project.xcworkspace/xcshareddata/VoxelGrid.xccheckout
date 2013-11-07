@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>2E71DE6A-EDAA-4F7D-AB70-BC4816FAF48E</string>
+	<key>IDESourceControlProjectName</key>
+	<string>VoxelGrid</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>2FED8C58-5B33-4E11-B201-21BEE53878C8</key>
+		<string>https://github.com/eighteight/VoxelGrid.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>VoxelGrid.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>2FED8C58-5B33-4E11-B201-21BEE53878C8</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/eighteight/VoxelGrid.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>2FED8C58-5B33-4E11-B201-21BEE53878C8</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2FED8C58-5B33-4E11-B201-21BEE53878C8</string>
+			<key>IDESourceControlWCCName</key>
+			<string>VoxelGrid</string>
+		</dict>
+	</array>
+</dict>
+</plist>

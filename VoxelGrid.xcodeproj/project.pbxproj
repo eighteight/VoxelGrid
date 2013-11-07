@@ -10,9 +10,9 @@
 		AFA997FA179B7D5500546EC9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AFA997F4179B7D5500546EC9 /* main.cpp */; };
 		AFA997FC179B7D5500546EC9 /* voxelgrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AFA997F7179B7D5500546EC9 /* voxelgrid.cpp */; settings = {COMPILER_FLAGS = "-fno-rtti"; }; };
 		E6AAC5A017C547E0005ADAA3 /* c4d_strings.str in Resources */ = {isa = PBXBuildFile; fileRef = E6AAC59D17C547E0005ADAA3 /* c4d_strings.str */; };
-		E6AAC5A117C547E0005ADAA3 /* voxelify.str in Resources */ = {isa = PBXBuildFile; fileRef = E6AAC59F17C547E0005ADAA3 /* voxelify.str */; };
-		E6AAC5A517C547F2005ADAA3 /* voxelify.h in Headers */ = {isa = PBXBuildFile; fileRef = E6AAC5A317C547F2005ADAA3 /* voxelify.h */; };
-		E6AAC5A617C547F2005ADAA3 /* voxelify.res in Resources */ = {isa = PBXBuildFile; fileRef = E6AAC5A417C547F2005ADAA3 /* voxelify.res */; };
+		E6AAC5A117C547E0005ADAA3 /* voxelgrid.str in Resources */ = {isa = PBXBuildFile; fileRef = E6AAC59F17C547E0005ADAA3 /* voxelgrid.str */; };
+		E6AAC5A517C547F2005ADAA3 /* voxelgrid.h in Headers */ = {isa = PBXBuildFile; fileRef = E6AAC5A317C547F2005ADAA3 /* voxelgrid.h */; };
+		E6AAC5A617C547F2005ADAA3 /* voxelgrid.res in Resources */ = {isa = PBXBuildFile; fileRef = E6AAC5A417C547F2005ADAA3 /* voxelgrid.res */; };
 		E6D950661816DAA700806311 /* Voxelifyer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6D950641816DAA700806311 /* Voxelifyer.cpp */; };
 		E6D950671816DAA700806311 /* Voxelifyer.h in Headers */ = {isa = PBXBuildFile; fileRef = E6D950651816DAA700806311 /* Voxelifyer.h */; };
 		E6D950711816FB9F00806311 /* c4d_symbols.h in Headers */ = {isa = PBXBuildFile; fileRef = E6D950701816FB9F00806311 /* c4d_symbols.h */; };
@@ -62,9 +62,9 @@
 		AFA997F4179B7D5500546EC9 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = main.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		AFA997F7179B7D5500546EC9 /* voxelgrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = voxelgrid.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		E6AAC59D17C547E0005ADAA3 /* c4d_strings.str */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 2; path = c4d_strings.str; sourceTree = "<group>"; };
-		E6AAC59F17C547E0005ADAA3 /* voxelify.str */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 2; path = voxelify.str; sourceTree = "<group>"; };
-		E6AAC5A317C547F2005ADAA3 /* voxelify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = voxelify.h; sourceTree = "<group>"; };
-		E6AAC5A417C547F2005ADAA3 /* voxelify.res */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 2; path = voxelify.res; sourceTree = "<group>"; };
+		E6AAC59F17C547E0005ADAA3 /* voxelgrid.str */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 2; path = voxelgrid.str; sourceTree = "<group>"; };
+		E6AAC5A317C547F2005ADAA3 /* voxelgrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = voxelgrid.h; sourceTree = "<group>"; };
+		E6AAC5A417C547F2005ADAA3 /* voxelgrid.res */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 2; path = voxelgrid.res; sourceTree = "<group>"; };
 		E6D950641816DAA700806311 /* Voxelifyer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = Voxelifyer.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		E6D950651816DAA700806311 /* Voxelifyer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Voxelifyer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		E6D950701816FB9F00806311 /* c4d_symbols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = c4d_symbols.h; path = res/c4d_symbols.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -154,7 +154,7 @@
 		E6AAC59E17C547E0005ADAA3 /* description */ = {
 			isa = PBXGroup;
 			children = (
-				E6AAC59F17C547E0005ADAA3 /* voxelify.str */,
+				E6AAC59F17C547E0005ADAA3 /* voxelgrid.str */,
 			);
 			path = description;
 			sourceTree = "<group>";
@@ -162,8 +162,8 @@
 		E6AAC5A217C547F2005ADAA3 /* description */ = {
 			isa = PBXGroup;
 			children = (
-				E6AAC5A317C547F2005ADAA3 /* voxelify.h */,
-				E6AAC5A417C547F2005ADAA3 /* voxelify.res */,
+				E6AAC5A317C547F2005ADAA3 /* voxelgrid.h */,
+				E6AAC5A417C547F2005ADAA3 /* voxelgrid.res */,
 			);
 			name = description;
 			path = res/description;
@@ -176,7 +176,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E6AAC5A517C547F2005ADAA3 /* voxelify.h in Headers */,
+				E6AAC5A517C547F2005ADAA3 /* voxelgrid.h in Headers */,
 				E6D950671816DAA700806311 /* Voxelifyer.h in Headers */,
 				E6D950711816FB9F00806311 /* c4d_symbols.h in Headers */,
 				E6F30F35181EF53500D32FFF /* VGrid.h in Headers */,
@@ -261,8 +261,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E6AAC5A017C547E0005ADAA3 /* c4d_strings.str in Resources */,
-				E6AAC5A117C547E0005ADAA3 /* voxelify.str in Resources */,
-				E6AAC5A617C547F2005ADAA3 /* voxelify.res in Resources */,
+				E6AAC5A117C547E0005ADAA3 /* voxelgrid.str in Resources */,
+				E6AAC5A617C547F2005ADAA3 /* voxelgrid.res in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

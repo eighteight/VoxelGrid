@@ -1,6 +1,6 @@
-STRINGTABLE voxelify
+STRINGTABLE voxelgrid
 {
-	voxelify			    "Voxelify Object";
+	voxelgrid			    "Voxelgrid Object";
     GRID_SIZE               "Grid size";
 	RADIUS                  "Filter radius";
     THRESHOLD               "Filter Neighbors";

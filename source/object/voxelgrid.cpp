@@ -2,9 +2,8 @@
 #include "c4d.h"
 #include "c4d_symbols.h"
 #include "c4d_tools.h"
-#include "lib_splinehelp.h"
 #include "ge_dynamicarray.h"
-#include "voxelify.h"
+#include "voxelgrid.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -37,7 +36,7 @@ Bool VoxelGrid::Init(GeListNode *node)
 {
 	BaseObject		*op   = (BaseObject*)node;
 	BaseContainer *data = op->GetDataInstance();
-
+    
     data->SetLong(SPLINEOBJECT_INTERPOLATION,SPLINEOBJECT_INTERPOLATION_ADAPTIVE);
     GePrint("VoxelGrid by http://twitter.com/eight_io for Cinema 4D r14");
     
@@ -112,9 +111,9 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     std::vector<VGrid> grids;
     
     BaseObject* ret = BaseObject::Alloc(Onull);
-
+    
     parentMatrix = op->GetMl();
-
+    
     Vector bb = chld->GetRad();
     Vector gridStep(bb.x/gridSize, bb.y/gridSize, bb.z/gridSize);
     Matrix ml;
@@ -122,12 +121,12 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     if (objectPoints.GetCount() == 0) return NULL;
     points = objectPointsToPoints(objectPoints);
     GePrint(chld->GetName());
-
+    
     LONG thre = data->GetReal(THRESHOLD, 1.0);
     Real multi = data->GetReal(MULTIPLIER, 1.0);
     vector<float> centro(3);
     VGrid grid = vox.voxelify(points,gridStep.x,gridStep.y,gridStep.z, centro, thre, multi );
-    
+    StatusSetText("Voxel gridding");
     for (int i = 0; i < grid.points.size(); i++){
         if (grid.indices[i] == -1) continue;
         Vector pos(grid.points[i][0],grid.points[i][1],grid.points[i][2]);
@@ -136,14 +135,12 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
         cube->SetRelScale(Vector(1.0/gridSize, 1.0/gridSize, 1.0/gridSize));
         cube->InsertUnder(ret);
     }
-    BaseObject* cyl = BaseObject::Alloc(Ocylinder);
-    cyl->SetRelPos(Vector(centro[0], centro[1], centro[2]));
-    cyl->InsertUnder(ret);
+    StatusClear();
     return ret;
 }
 
 
 Bool Registervoxelify(void)
 {
-	return RegisterObjectPlugin(ID_VOXELGRID ,GeLoadString(IDS_VOXELIFY),OBJECT_GENERATOR|OBJECT_INPUT|OBJECT_CALL_ADDEXECUTION,VoxelGrid::Alloc,"voxelify",AutoBitmap("tsp.tif"),0);
+	return RegisterObjectPlugin(ID_VOXELGRID ,GeLoadString(IDS_VOXELIFY),OBJECT_GENERATOR|OBJECT_INPUT,VoxelGrid::Alloc,"voxelgrid",AutoBitmap("tsp.tif"),0);
 }

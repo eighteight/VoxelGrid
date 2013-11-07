@@ -1,6 +1,6 @@
-CONTAINER voxelify
+CONTAINER voxelgrid
 {
-	NAME voxelify;
+	NAME voxelgrid;
 	INCLUDE Obase;
 
 	GROUP ID_OBJECTPROPERTIES
