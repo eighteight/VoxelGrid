@@ -12,15 +12,10 @@
 // unique ID obtained from www.plugincafe.com
 #define ID_VOXELGRID 1031351
 
-typedef std::pair<SplineObject*,Real> SplinePair;
-bool comparator ( const SplinePair& l, const SplinePair& r){
-    return l.second > r.second;
-}
-
 class VoxelGrid : public ObjectData
 {
 private:
-    Real maxSeg, minSeg;
+
     Matrix parentMatrix;
     void DoRecursion(BaseObject *op, BaseObject *child, GeDynamicArray<Vector> &points, Matrix ml);
     vector<vector<float> > objectPointsToPoints(GeDynamicArray<Vector>  objectPoints);
@@ -34,10 +29,7 @@ public:
 
 Bool VoxelGrid::Init(GeListNode *node)
 {
-	BaseObject		*op   = (BaseObject*)node;
-	BaseContainer *data = op->GetDataInstance();
-    
-    data->SetLong(SPLINEOBJECT_INTERPOLATION,SPLINEOBJECT_INTERPOLATION_ADAPTIVE);
+
     GePrint("VoxelGrid by http://twitter.com/eight_io for Cinema 4D r14");
     
     return TRUE;
@@ -93,16 +85,21 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     BaseContainer *data = op->GetDataInstance();
     
     LONG gridSize = data->GetLong(GRID_SIZE, 1);
-    
-    BaseObject* clone = op->GetDown();
+    BaseDocument* doc = (BaseDocument*)op->GetDocument();
+    LONG crntFrame = doc->GetTime().GetFrame(doc->GetFps());
+    LONG trck = 0;
+    BaseObject* chld = NULL;
+
+    BaseObject* clone = NULL;
+    for (chld=op->GetDownLast(); chld; chld=chld->GetPred()) {
+        if (trck == crntFrame){
+            clone = (BaseObject*)chld->GetClone(COPYFLAGS_NO_HIERARCHY|COPYFLAGS_NO_ANIMATION|COPYFLAGS_NO_BITS,NULL);
+        }
+        trck++;
+    }
     
     if (!clone) return NULL;
-    
-    BaseObject* chld = (BaseObject*)clone->GetClone(COPYFLAGS_NO_HIERARCHY|COPYFLAGS_NO_ANIMATION|COPYFLAGS_NO_BITS,NULL);
-    
-    if (!chld) {
-        return NULL;
-    }
+
     
     GeDynamicArray<Vector> objectPoints;
 	StatusSetBar(0);
@@ -114,13 +111,14 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     
     parentMatrix = op->GetMl();
     
-    Vector bb = chld->GetRad();
+    Vector bb = clone->GetRad();
     Vector gridStep(bb.x/gridSize, bb.y/gridSize, bb.z/gridSize);
     Matrix ml;
-    DoRecursion(op,chld,objectPoints, ml);
+    GePrint(clone->GetTypeName());
+
+    DoRecursion(op,ToPoint(clone),objectPoints, ml);
     if (objectPoints.GetCount() == 0) return NULL;
     points = objectPointsToPoints(objectPoints);
-    GePrint(chld->GetName());
     
     LONG thre = data->GetReal(THRESHOLD, 1.0);
     Real multi = data->GetReal(MULTIPLIER, 1.0);
