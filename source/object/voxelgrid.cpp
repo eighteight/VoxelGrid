@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include "Voxelifyer.h"
+#include <boost/make_shared.hpp>
 #include "VGrid.h"
 // unique ID obtained from www.plugincafe.com
 #define ID_VOXELGRID 1031351
@@ -19,12 +20,14 @@ private:
     Matrix parentMatrix;
     void DoRecursion(BaseObject *op, BaseObject *child, GeDynamicArray<Vector> &points, Matrix ml);
     vector<vector<float> > objectPointsToPoints(GeDynamicArray<Vector>  objectPoints);
-    Voxelifier vox;
     
 public:
     BaseObject* GetVirtualObjects(BaseObject *op, HierarchyHelp *hh);
     virtual Bool Init(GeListNode *node);
     static NodeData *Alloc(void) { return gNew VoxelGrid; }
+    Bool Message(GeListNode *node, LONG type, void *data);
+    ~VoxelGrid();
+
 };
 
 Bool VoxelGrid::Init(GeListNode *node)
@@ -33,6 +36,15 @@ Bool VoxelGrid::Init(GeListNode *node)
     GePrint("VoxelGrid by http://twitter.com/eight_io for Cinema 4D r14");
     
     return TRUE;
+}
+
+VoxelGrid::~VoxelGrid(){
+    
+}
+
+Bool VoxelGrid::Message(GeListNode *node, LONG type, void *data)
+{
+	return TRUE;
 }
 
 void VoxelGrid::DoRecursion(BaseObject *op, BaseObject *child, GeDynamicArray<Vector> &points, Matrix ml) {
@@ -100,7 +112,6 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     
     if (!clone) return NULL;
 
-    
     GeDynamicArray<Vector> objectPoints;
 	StatusSetBar(0);
     StatusSetText("Collecting Points");
@@ -123,7 +134,8 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     LONG thre = data->GetReal(THRESHOLD, 1.0);
     Real multi = data->GetReal(MULTIPLIER, 1.0);
     vector<float> centro(3);
-    VGrid grid = vox.voxelify(points,gridStep.x,gridStep.y,gridStep.z, centro, thre, multi );
+    boost::shared_ptr<Voxelifier> vox ( new Voxelifier());
+    VGrid grid = vox->voxelify(points,gridSize, centro, thre, multi );
     StatusSetText("Voxel gridding");
     for (int i = 0; i < grid.points.size(); i++){
         if (grid.indices[i] == -1) continue;
@@ -134,6 +146,7 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
         cube->InsertUnder(ret);
     }
     StatusClear();
+    vox.reset();
     return ret;
 }
 

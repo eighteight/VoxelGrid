@@ -13,7 +13,6 @@
 #include <pcl/common/pca.h>
 #include <pcl/common/common.h>
 #include <pcl/filters/statistical_outlier_removal.h>
-
 #include <pcl/common/centroid.h>
 #include <boost/make_shared.hpp>
 
@@ -37,23 +36,6 @@ struct Deleter
     }
 };
 
-
-void computeBoundingBox(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud, pcl::PointXYZ& min, pcl::PointXYZ& max){
-    pcl::PCA< PointXYZ > pca;
-    
-    pcl::PointCloud< PointXYZ > proj;
-
-    pca.setInputCloud (cloud);
-    pca.project (*cloud, proj);
-    
-    pcl::PointXYZ proj_min;
-    pcl::PointXYZ proj_max;
-    pcl::getMinMax3D (proj, proj_min, proj_max);
-    
-    pca.reconstruct (proj_min, min);
-    pca.reconstruct (proj_max, max);
-}
-
 boost::shared_ptr<pcl::StatisticalOutlierRemoval<pcl::PointXYZ> > sor = make_shared<pcl::StatisticalOutlierRemoval<pcl::PointXYZ> >();
 
 void removeOutliers(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_filtered, const int meanK, const float mulTrh){
@@ -65,8 +47,7 @@ void removeOutliers(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<p
 
     sor->filter (*cloud_filtered);
     
-    std::cerr << "Stat Outlier " << cloud->points.size()<<" "<<cloud_filtered->points.size() << std::endl;
-
+    //std::cerr << "Stat Outlier " << cloud->points.size()<<" "<<cloud_filtered->points.size() << std::endl;
 }
 
 vector<float> computeCentro(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
@@ -84,7 +65,8 @@ vector<float> computeCentro(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
     pcl::PCLPointCloud2::Ptr cloud2Out = make_shared<pcl::PCLPointCloud2> ();
     //boost::shared_ptr< pcl::PCLPointCloud2> cloud2Out( new pcl::PCLPointCloud2(), mallocDeleter<pcl::PCLPointCloud2>());
     VoxelGrid<PCLPointCloud2> voxelGrid;
-VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const float xLeaf, const float yLeaf, const float zLeaf, vector<float> &centro, int thre, float multi){
+
+VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const int gridSize, vector<float> &centro, int thre, float multi){
     
     PointCloud<PointXYZ>::Ptr cloudInOut = make_shared<PointCloud<PointXYZ> >();
     
@@ -100,69 +82,56 @@ VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const
         pt.z = points[i][2];
     }
 
-    pcl::PointXYZ min, max;
-    computeBoundingBox(cloudInOut, min, max);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered = make_shared<pcl::PointCloud<pcl::PointXYZ> >();
 
     removeOutliers(cloudInOut, cloud_filtered, thre, multi);
-    
-    cloudInOut = cloud_filtered;
-    //computeBoundingBox(cloudInOut, min, max);
-//    vector<float> bb (3);
-//    bb[0] = max.x - min.x;
-//    bb[1] = max.y - min.y;
-//    bb[2] = max.z - min.z;
-    pcl::toPCLPointCloud2 (*cloudInOut,*cloud2In);
+    pcl::PointXYZ min, max;
 
+    pcl::getMinMax3D (*cloud_filtered, min, max);
+
+    vector<float> bb (3);
+    bb[0] = max.x - min.x;
+    bb[1] = max.y - min.y;
+    bb[2] = max.z - min.z;
+    
+    float xLeaf = abs(bb[0]/gridSize);
+    float yLeaf = abs(bb[1]/gridSize);
+    float zLeaf = abs(bb[2]/gridSize);
+
+    pcl::toPCLPointCloud2 (*cloud_filtered,*cloud2In); 
+    
     voxelGrid.setInputCloud (cloud2In);
     voxelGrid.setLeafSize (xLeaf, yLeaf, zLeaf);
 
     voxelGrid.setSaveLeafLayout(true);
     voxelGrid.filter (*cloud2Out);
-    
-    cerr << "Voxel: "<<cloudInOut->width * cloudInOut->height <<"->"<< cloud2Out->width * cloud2Out->height<<endl;
-    
-//    std::cerr << "Min box: " << endl<<voxelGrid.getMinBoxCoordinates()
-//    << endl<<" Max Box " << voxelGrid.getMaxBoxCoordinates() << endl;
 
     pcl::fromPCLPointCloud2 (*cloud2Out, *cloudInOut);
     
-    VGrid vGrid;
-    vGrid.x_leaf = xLeaf;
-    vGrid.y_leaf = yLeaf;
-    vGrid.z_leaf = zLeaf;
+    VGrid vGrid(xLeaf,yLeaf,zLeaf);
     
     int data_cnt = 0;
-    const Eigen::Vector3i v_ref = voxelGrid.getMinBoxCoordinates ();
-    int nr0 = voxelGrid.getNrDivisions ()[0], nr1 = voxelGrid.getNrDivisions ()[1], nr2 = voxelGrid.getNrDivisions ()[2];
-    vGrid.points = std::vector<vector<float> >(nr0*nr1*nr2, vector<float>(3,0.0));
-    vGrid.indices = std::vector<int>(nr0*nr1*nr2, -1);
-    for (int i = 0; i < nr0; i++) {
-    for (int j = 0; j < nr1; j++) {
-      Eigen::Vector3f p (0, 0, 0);
-
-      for (int k = 0; k < nr2; k++) {
-        Eigen::Vector3i v (i, j, k);
-        v = v + v_ref;
-        int index = voxelGrid.getCentroidIndexAt (v);
-
-        if (index != -1){
-            vGrid.indices[data_cnt] = 1;
-
-            vGrid.points[data_cnt][0] = cloudInOut->points[index].x;
-            vGrid.points[data_cnt][1] = cloudInOut->points[index].y;
-            vGrid.points[data_cnt][2] = cloudInOut->points[index].z;
-
-          Eigen::Vector3f grid_leaf_size = voxelGrid.getLeafSize ();
-          p = p + Eigen::Vector3f (v[0] * grid_leaf_size[0], v[1] * grid_leaf_size[1], v[2] * grid_leaf_size[2]);
-
-        }
-        data_cnt++;
-      }
-    }
-    }
+    const Eigen::Vector3i v_min = voxelGrid.getMinBoxCoordinates ();
     
-    std::cout<<vGrid<<std::endl;
+    int nr0 = voxelGrid.getNrDivisions ()[0], nr1 = voxelGrid.getNrDivisions ()[1], nr2 = voxelGrid.getNrDivisions ()[2];
+    vGrid.points = vector<vector<float> >(nr0*nr1*nr2, vector<float>(3,0.0));
+    vGrid.indices = vector<int>(nr0*nr1*nr2, -1);
+    for (int i = 0; i < nr0; i++) {
+        for (int j = 0; j < nr1; j++) {
+            for (int k = 0; k < nr2; k++) {
+                Eigen::Vector3i v (i, j, k);
+                v = v + v_min;
+                int index = voxelGrid.getCentroidIndexAt (v);
+                if (index != -1){
+                    vGrid.indices[data_cnt] = 1;
+                    vGrid.points[data_cnt][0] = cloudInOut->points[index].x;
+                    vGrid.points[data_cnt][1] = cloudInOut->points[index].y;
+                    vGrid.points[data_cnt][2] = cloudInOut->points[index].z;
+                }
+            data_cnt++;
+          }
+        }
+    }
     return vGrid;
 }
 

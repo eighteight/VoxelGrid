@@ -14,6 +14,8 @@
 class VGrid{
 public:
     VGrid(){};
+    VGrid(const float x_leaf, const float y_leaf, const float z_leaf): x_leaf(x_leaf), y_leaf(y_leaf), z_leaf(z_leaf){
+    }
     VGrid(const int x_size, const int y_size, const int z_size, const float x_leaf, const float y_leaf, const float z_leaf):
     x_size(x_size), y_size(y_size), z_size(z_size), x_leaf(x_leaf), y_leaf(y_leaf), z_leaf(z_leaf){
     }
@@ -37,7 +39,7 @@ public:
 
 inline std::ostream& operator<<(std::ostream& os, const VGrid& vg)
 {
-    os << vg.x_leaf << ':' << vg.y_leaf << ':' << vg.z_leaf<<"="<<vg.points.size()<<std::endl;
+    os << vg.x_leaf << ' ' << vg.y_leaf << ' ' << vg.z_leaf<<"="<<vg.points.size()<<std::endl;
 //    for (size_t i = 0; i < vg.points.size(); i++){
 //        if (vg.indices[i] == 1)
 //        os << "["<<i<<"] "<< vg.points[i][0] << " "<< vg.points[i][1] << " "<< vg.points[i][2]<< std::endl;
