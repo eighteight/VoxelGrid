@@ -10,7 +10,6 @@
 #include <pcl/point_types.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/conversions.h>
-#include <pcl/common/pca.h>
 #include <pcl/common/common.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/common/centroid.h>
@@ -62,12 +61,11 @@ vector<float> computeCentro(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
     return centro;
 }
     pcl::PCLPointCloud2::Ptr cloud2In = make_shared<pcl::PCLPointCloud2>();
-    pcl::PCLPointCloud2::Ptr cloud2Out = make_shared<pcl::PCLPointCloud2> ();
-    //boost::shared_ptr< pcl::PCLPointCloud2> cloud2Out( new pcl::PCLPointCloud2(), mallocDeleter<pcl::PCLPointCloud2>());
+
     VoxelGrid<PCLPointCloud2> voxelGrid;
 
 VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const int gridSize, vector<float> &centro, int thre, float multi){
-    
+    pcl::PCLPointCloud2::Ptr cloud2Out = shared_ptr< pcl::PCLPointCloud2>(new pcl::PCLPointCloud2 (), Deleter<pcl::PCLPointCloud2>());
     PointCloud<PointXYZ>::Ptr cloudInOut = make_shared<PointCloud<PointXYZ> >();
     
     cloudInOut->width  = points.size();
@@ -120,7 +118,7 @@ VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const
         for (int j = 0; j < nr1; j++) {
             for (int k = 0; k < nr2; k++) {
                 Eigen::Vector3i v (i, j, k);
-                v = v + v_min;
+                v += v_min;
                 int index = voxelGrid.getCentroidIndexAt (v);
                 if (index != -1){
                     vGrid.indices[data_cnt] = 1;
@@ -128,8 +126,8 @@ VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const
                     vGrid.points[data_cnt][1] = cloudInOut->points[index].y;
                     vGrid.points[data_cnt][2] = cloudInOut->points[index].z;
                 }
-            data_cnt++;
-          }
+                data_cnt++;
+            }
         }
     }
     return vGrid;
