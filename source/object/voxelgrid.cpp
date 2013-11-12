@@ -20,7 +20,7 @@ private:
     Matrix parentMatrix;
     void DoRecursion(BaseObject *op, BaseObject *child, GeDynamicArray<Vector> &points, Matrix ml);
     vector<vector<float> > objectPointsToPoints(GeDynamicArray<Vector>  objectPoints);
-    
+    Voxelifier vox;
 public:
     BaseObject* GetVirtualObjects(BaseObject *op, HierarchyHelp *hh);
     virtual Bool Init(GeListNode *node);
@@ -118,24 +118,19 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     vector<vector<float> > points;
     std::vector<VGrid> grids;
     
-    BaseObject* ret = BaseObject::Alloc(Onull);
-    
     parentMatrix = op->GetMl();
-    
-    Vector bb = clone->GetRad();
-    Vector gridStep(bb.x/gridSize, bb.y/gridSize, bb.z/gridSize);
     Matrix ml;
-    GePrint(clone->GetTypeName());
 
     DoRecursion(op,ToPoint(clone),objectPoints, ml);
     if (objectPoints.GetCount() == 0) return NULL;
     points = objectPointsToPoints(objectPoints);
     
-    LONG thre = data->GetReal(THRESHOLD, 1.0);
+    LONG thre = data->GetLong(THRESHOLD, 10);
+    if (thre<1) return NULL;
     Real multi = data->GetReal(MULTIPLIER, 1.0);
-    vector<float> centro(3);
-    boost::shared_ptr<Voxelifier> vox ( new Voxelifier());
-    VGrid grid = vox->voxelify(points,gridSize, centro, thre, multi );
+
+    BaseObject* ret = BaseObject::Alloc(Onull);
+    VGrid grid = vox->voxelify(points, gridSize, thre, multi );
     StatusSetText("Voxel gridding");
     for (int i = 0; i < grid.points.size(); i++){
         if (grid.indices[i] == -1) continue;
@@ -146,7 +141,7 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
         cube->InsertUnder(ret);
     }
     StatusClear();
-    vox.reset();
+
     return ret;
 }
 

@@ -14,7 +14,7 @@ class Voxelifier{
 public:
     Voxelifier(){};
     ~Voxelifier(){};
-    VGrid voxelify(const std::vector<std::vector<float> >& points, const int gridSize, std::vector<float>& centro, int thre, float multi);
+    VGrid voxelify(const std::vector<std::vector<float> >& points, const int gridSize, int thre, float multi);
 
 
 };

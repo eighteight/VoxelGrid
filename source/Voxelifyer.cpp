@@ -60,13 +60,14 @@ vector<float> computeCentro(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
     
     return centro;
 }
-    pcl::PCLPointCloud2::Ptr cloud2In = make_shared<pcl::PCLPointCloud2>();
+
 
     VoxelGrid<PCLPointCloud2> voxelGrid;
 
-VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const int gridSize, vector<float> &centro, int thre, float multi){
+VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const int gridSize, int thre, float multi){
     pcl::PCLPointCloud2::Ptr cloud2Out = shared_ptr< pcl::PCLPointCloud2>(new pcl::PCLPointCloud2 (), Deleter<pcl::PCLPointCloud2>());
     PointCloud<PointXYZ>::Ptr cloudInOut = make_shared<PointCloud<PointXYZ> >();
+    pcl::PCLPointCloud2::Ptr cloud2In = shared_ptr< pcl::PCLPointCloud2>(new pcl::PCLPointCloud2 (), Deleter<pcl::PCLPointCloud2>());
     
     cloudInOut->width  = points.size();
     cloudInOut->height = 1;
@@ -106,12 +107,12 @@ VGrid Voxelifier::voxelify(const std::vector<std::vector<float> >& points, const
 
     pcl::fromPCLPointCloud2 (*cloud2Out, *cloudInOut);
     
-    VGrid vGrid(xLeaf,yLeaf,zLeaf);
-    
     int data_cnt = 0;
     const Eigen::Vector3i v_min = voxelGrid.getMinBoxCoordinates ();
     
     int nr0 = voxelGrid.getNrDivisions ()[0], nr1 = voxelGrid.getNrDivisions ()[1], nr2 = voxelGrid.getNrDivisions ()[2];
+    
+    VGrid vGrid(xLeaf,yLeaf,zLeaf);
     vGrid.points = vector<vector<float> >(nr0*nr1*nr2, vector<float>(3,0.0));
     vGrid.indices = vector<int>(nr0*nr1*nr2, -1);
     for (int i = 0; i < nr0; i++) {
