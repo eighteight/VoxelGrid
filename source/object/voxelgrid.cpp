@@ -130,7 +130,7 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     Real multi = data->GetReal(MULTIPLIER, 1.0);
 
     BaseObject* ret = BaseObject::Alloc(Onull);
-    VGrid grid = vox->voxelify(points, gridSize, thre, multi );
+    VGrid grid = vox.voxelify(points, gridSize, thre, multi );
     StatusSetText("Voxel gridding");
     for (int i = 0; i < grid.points.size(); i++){
         if (grid.indices[i] == -1) continue;

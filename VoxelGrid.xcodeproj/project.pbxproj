@@ -313,9 +313,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_LDFLAGS = (
 					"$(C4D_ROOTDIR)/resource/_api_lib/lib_api_debug.a",
-					"/usr/local/lib/libboost_system-mt.dylib",
-					/usr/local/lib/libpcl_common.dylib,
-					/usr/local/lib/libpcl_filters.1.7.0.dylib,
+					"\"$(SRCROOT)/pcl/libpcl_filters.dylib\"",
+					"\"$(SRCROOT)/pcl/libpcl_common.dylib\"",
+					"\"$(SRCROOT)/pcl/libboost_system.dylib\"",
 				);
 				PRODUCT_NAME = VoxelGrid;
 				SKIP_INSTALL = NO;
@@ -337,9 +337,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_LDFLAGS = (
 					"$(C4D_ROOTDIR)/resource/_api_lib/lib_api_release.a",
-					"/usr/local/lib/libboost_system-mt.dylib",
-					/usr/local/lib/libpcl_common.dylib,
-					/usr/local/lib/libpcl_filters.dylib,
+					"\"$(SRCROOT)/pcl/libpcl_filters.dylib\"",
+					"\"$(SRCROOT)/pcl/libpcl_common.dylib\"",
+					"\"$(SRCROOT)/pcl/libboost_system.dylib\"",
 				);
 				PRODUCT_NAME = VoxelGrid;
 				SKIP_INSTALL = NO;
@@ -366,18 +366,7 @@
 					"/usr/local/include/vtk-5.10/",
 					/usr/local/include,
 				);
-				OTHER_LDFLAGS = (
-					"$(C4D_ROOTDIR)/resource/_api_lib/lib_api_debug.a",
-					"/usr/local/lib/libboost_system-mt.dylib",
-					/usr/local/lib/libpcl_common.1.7.0.dylib,
-					/usr/local/lib/libpcl_kdtree.1.7.0.dylib,
-					/usr/local/lib/libpcl_search.1.7.0.dylib,
-					/usr/local/lib/libpcl_sample_consensus.1.7.0.dylib,
-					/usr/local/lib/libpcl_filters.1.7.0.dylib,
-					/usr/local/lib/libpcl_features.1.7.0.dylib,
-					/usr/local/lib/libpcl_segmentation.1.7.0.dylib,
-					/usr/local/lib/libpcl_surface.1.7.0.dylib,
-				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = cinema4dsdk;
 				SDKROOT = macosx;
 				"SDKROOT[arch=i386]" = macosx;
@@ -401,18 +390,7 @@
 					"/usr/local/include/vtk-5.10/",
 					/usr/local/include,
 				);
-				OTHER_LDFLAGS = (
-					"$(C4D_ROOTDIR)/resource/_api_lib/lib_api_release.a",
-					"/usr/local/lib/libboost_system-mt.dylib",
-					/usr/local/lib/libpcl_common.1.7.0.dylib,
-					/usr/local/lib/libpcl_kdtree.1.7.0.dylib,
-					/usr/local/lib/libpcl_segmentation.1.7.0.dylib,
-					/usr/local/lib/libpcl_filters.1.7.0.dylib,
-					/usr/local/lib/libpcl_features.1.7.0.dylib,
-					/usr/local/lib/libpcl_surface.1.7.0.dylib,
-					/usr/local/lib/libpcl_sample_consensus.1.7.0.dylib,
-					/usr/local/lib/libpcl_search.1.7.0.dylib,
-				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = cinema4dsdk;
 				SDKROOT = macosx;
 				"SDKROOT[arch=i386]" = macosx;
