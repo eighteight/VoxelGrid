@@ -2,7 +2,7 @@ STRINGTABLE voxelgrid
 {
 	voxelgrid			    "Voxelgrid Object";
     GRID_SIZE               "Grid size";
-	RADIUS                  "Filter radius";
     THRESHOLD               "Filter Neighbors";
     MULTIPLIER              "Filter Multiplier";
+    GRID_CUBE_FACTOR        "Grid Cube Display Size";
 }

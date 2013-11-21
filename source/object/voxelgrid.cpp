@@ -95,8 +95,7 @@ vector<vector<float> > VoxelGrid::objectPointsToPoints(GeDynamicArray<Vector>  o
 BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
 {
     BaseContainer *data = op->GetDataInstance();
-    
-    LONG gridSize = data->GetLong(GRID_SIZE, 1);
+
     BaseDocument* doc = (BaseDocument*)op->GetDocument();
     LONG crntFrame = doc->GetTime().GetFrame(doc->GetFps());
     LONG trck = 0;
@@ -111,6 +110,9 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     }
     
     if (!clone) return NULL;
+    
+    LONG gridSize = data->GetLong(GRID_SIZE, 1);
+    Real gridDisplayFactor = data->GetReal(GRID_CUBE_FACTOR,100.0)/100.0;
 
     GeDynamicArray<Vector> objectPoints;
 	StatusSetBar(0);
@@ -132,15 +134,18 @@ BaseObject *VoxelGrid::GetVirtualObjects(BaseObject *op, HierarchyHelp *hh)
     BaseObject* ret = BaseObject::Alloc(Onull);
     VGrid grid = vox.voxelify(points, gridSize, thre, multi );
     StatusSetText("Voxel gridding");
+    size_t fullPoints = 0;
     for (int i = 0; i < grid.points.size(); i++){
         if (grid.indices[i] == -1) continue;
         Vector pos(grid.points[i][0],grid.points[i][1],grid.points[i][2]);
         BaseObject* cube = BaseObject::Alloc(Ocube);
         cube->SetRelPos(pos);
-        cube->SetRelScale(Vector(1.0/gridSize, 1.0/gridSize, 1.0/gridSize));
+        cube->SetRelScale(gridDisplayFactor*Vector(1.0, 1.0, 1.0)/gridSize);
         cube->InsertUnder(ret);
+        fullPoints++;
     }
-    StatusClear();
+    StatusSetText(LongToString(fullPoints));
+    //StatusClear();
 
     return ret;
 }

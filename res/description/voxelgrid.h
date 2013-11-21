@@ -5,7 +5,8 @@ enum
 {
     GRID_SIZE = 200000,
     THRESHOLD,
-    MULTIPLIER
+    MULTIPLIER,
+    GRID_CUBE_FACTOR
 };
 
 #endif
